@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@layer theme {
+  :root {
+    --color-bg-dark: #050505;
+    --color-bg-card: #0a0a0a;
+    --color-accent-gold: #d4af37; /* Brighter, more visible gold */
+    --color-text-light: #ffffff;
+    --color-text-muted: #888888;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text-light);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background-color: var(--color-accent-gold);
+    color: var(--color-bg-dark);
+  }
+}
+
+@layer utilities {
+  .text-gold {
+    color: var(--color-accent-gold);
+  }
+  .bg-gold {
+    background-color: var(--color-accent-gold);
+  }
+  .border-gold {
+    border-color: var(--color-accent-gold);
+  }
+  .shadow-luxury {
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(197, 160, 89, 0.1);
+  }
+  
+  .font-serif-luxury {
+    font-family: 'Cinzel', 'Playfair Display', serif;
+  }
+}
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  /* Hide interactive elements when printing */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Remove shadows and adjust colors for print */
+  .print-clean {
+    box-shadow: none !important;
+    background: white !important;
+    border: 1px solid #ccc !important;
+  }
+}
