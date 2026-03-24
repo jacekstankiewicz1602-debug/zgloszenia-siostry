@@ -24,6 +24,7 @@ export interface FormValues {
   consentActivities: boolean;
 
   // Section 4: Additional
+  reasonToAttend: string;
   tShirtSize: string;
   campExperience: boolean;
   notes: string;

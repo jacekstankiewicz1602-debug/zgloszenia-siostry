@@ -7,9 +7,12 @@ import { HealthSection } from './sections/HealthSection';
 import { ConsentsSection } from './sections/ConsentsSection';
 import { AdditionalSection } from './sections/AdditionalSection';
 import { FooterSection } from './sections/FooterSection';
+import { generateRegistrationPDF } from '../utils/pdfGenerator';
+import { Download } from 'lucide-react';
 
 export function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState<FormValues | null>(null);
   
   const { 
     register, 
@@ -44,6 +47,7 @@ export function RegistrationForm() {
       const submissions = existing ? JSON.parse(existing) : [];
       submissions.push(fullData);
       localStorage.setItem('narnia-submissions', JSON.stringify(submissions));
+      setSubmittedData(fullData);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {
@@ -56,6 +60,12 @@ export function RegistrationForm() {
     window.print();
   };
 
+  const handleDownloadPDF = async () => {
+    if (submittedData) {
+      await generateRegistrationPDF(submittedData);
+    }
+  };
+
   if (isSubmitted) {
     return (
       <div className="text-center py-24 animate-fade-in no-print">
@@ -66,12 +76,23 @@ export function RegistrationForm() {
         </div>
         <h2 className="text-4xl font-serif-luxury text-gold mb-4 tracking-widest uppercase">Zgłoszenie Przyjęte</h2>
         <p className="text-[var(--color-text-light)]/80 text-lg mb-12 font-light">Twoja karta została pomyślnie zapisana w systemie.</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="px-8 py-4 border border-gold/50 text-gold hover:bg-gold hover:text-black transition-all duration-500 uppercase tracking-[0.2em] text-sm"
-        >
-          Wypełnij nową kartę
-        </button>
+        
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <button 
+            onClick={handleDownloadPDF}
+            className="flex items-center gap-2 px-8 py-4 bg-gold/10 border border-gold text-gold hover:bg-gold hover:text-black transition-all duration-500 uppercase tracking-[0.2em] text-sm font-semibold"
+          >
+            <Download size={18} />
+            Pobierz PDF ze zgłoszeniem
+          </button>
+          
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-8 py-4 border border-gold/50 text-gold hover:bg-gold/20 transition-all duration-500 uppercase tracking-[0.2em] text-sm"
+          >
+            Wypełnij nową kartę
+          </button>
+        </div>
       </div>
     );
   }
@@ -91,7 +112,7 @@ export function RegistrationForm() {
       </FormSection>
 
       <FormSection title="Informacje Dodatkowe" number={4} delay={0.4}>
-        <AdditionalSection register={register} watch={watch} setValue={setValue} />
+        <AdditionalSection register={register} watch={watch} setValue={setValue} errors={errors} />
       </FormSection>
 
       <FooterSection />

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { type FormValues } from '../types';
+import { generateRegistrationPDF } from '../utils/pdfGenerator';
+import { Download } from 'lucide-react';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -71,7 +73,7 @@ export function AdminDashboard({ onLogout, onToggleView }: AdminDashboardProps) 
             <thead>
               <tr className="border-b-2 border-gold/20 text-gold text-xs uppercase tracking-widest">
                 <th className="py-4 px-4 font-semibold">Data Rejestracji</th>
-                <th className="py-4 px-4 font-semibold">N/A / Opcje</th>
+                <th className="py-4 px-4 font-semibold">Opcje</th>
                 <th className="py-4 px-4 font-semibold">Telefon Uczestnika</th>
                 <th className="py-4 px-4 font-semibold">Dieta</th>
                 <th className="py-4 px-4 font-semibold">Koszulka</th>
@@ -84,8 +86,14 @@ export function AdminDashboard({ onLogout, onToggleView }: AdminDashboardProps) 
                   <td className="py-3 px-4 text-sm whitespace-nowrap text-[var(--color-text-muted)]">
                     {new Date(sub.createdAt).toLocaleDateString()} {new Date(sub.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </td>
-                  <td className="py-3 px-4 text-sm">
-                    {sub.emergencyName ? "+" : "-"}
+                  <td className="py-3 px-4 text-sm mt-1 flex gap-2">
+                    <button 
+                      onClick={() => generateRegistrationPDF(sub)}
+                      className="p-1.5 text-gold border border-gold/30 hover:bg-gold hover:text-black transition-colors rounded-sm"
+                      title="Pobierz PDF"
+                    >
+                      <Download size={16} />
+                    </button>
                   </td>
                   <td className="py-3 px-4 text-sm font-medium">{sub.participantPhone}</td>
                   <td className="py-3 px-4 text-sm">{sub.diet}</td>
