@@ -24,7 +24,8 @@ export const generateRegistrationPDF = async (data: FormValues) => {
     
     <h2 style="color: #a38040; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; margin-top: 1.5rem;">Dane Kontaktowe</h2>
     <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
-      <tr><td style="padding: 0.5rem 0; width: 40%; border-bottom: 1px solid #f5f5f5;"><strong>Telefon Uczestnika:</strong></td><td style="border-bottom: 1px solid #f5f5f5;">${data.participantPhone || '-'}</td></tr>
+      <tr><td style="padding: 0.5rem 0; width: 40%; border-bottom: 1px solid #f5f5f5;"><strong>Imię i Nazwisko:</strong></td><td style="border-bottom: 1px solid #f5f5f5;">${data.firstName || '-'} ${data.lastName || '-'}</td></tr>
+      <tr><td style="padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5;"><strong>Telefon Uczestnika:</strong></td><td style="border-bottom: 1px solid #f5f5f5;">${data.participantPhone || '-'}</td></tr>
       <tr><td style="padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5;"><strong>Telefon Rodzica:</strong></td><td style="border-bottom: 1px solid #f5f5f5;">${data.parentPhone || '-'}</td></tr>
       <tr><td style="padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5;"><strong>Numer Alarmowy:</strong></td><td style="border-bottom: 1px solid #f5f5f5;">${data.emergencyPhone || '-'} (Osoba: ${data.emergencyName || '-'})</td></tr>
       <tr><td style="padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5;"><strong>Email:</strong></td><td style="border-bottom: 1px solid #f5f5f5;">${data.email || '-'}</td></tr>

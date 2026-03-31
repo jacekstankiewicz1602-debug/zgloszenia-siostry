@@ -49,17 +49,54 @@
   body {
     background: white !important;
     color: black !important;
+    font-size: 12pt;
   }
   
   /* Hide interactive elements when printing */
-  .no-print {
+  .no-print, 
+  button, 
+  .admin-actions {
     display: none !important;
   }
 
+  /* Make the container full width and remove offsets */
+  #form-section {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
   /* Remove shadows and adjust colors for print */
-  .print-clean {
+  .print-clean, 
+  .bg-\[var\(--color-bg-dark\)\],
+  .bg-\[var\(--color-bg-card\)\] {
     box-shadow: none !important;
     background: white !important;
-    border: 1px solid #ccc !important;
+    border: none !important;
+    color: black !important;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border-bottom: 1px solid #000 !important;
+    color: black !important;
+    padding: 8px !important;
+  }
+
+  .text-gold {
+    color: black !important;
+    font-weight: bold;
+  }
+
+  /* Force display of hidden print elements */
+  .print\:block {
+    display: block !important;
+  }
+  
+  .print\:hidden {
+    display: none !important;
   }
 }

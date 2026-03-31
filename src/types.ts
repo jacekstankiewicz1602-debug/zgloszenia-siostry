@@ -3,6 +3,8 @@ export interface FormValues {
   createdAt: string;
   
   // Section 1: Contact
+  firstName: string;
+  lastName: string;
   participantPhone: string;
   parentPhone: string;
   emergencyName: string;
