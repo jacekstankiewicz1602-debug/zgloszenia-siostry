@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type FormValues } from '../types';
+import { supabase } from '../lib/supabase';
 import { generateRegistrationPDF } from '../utils/pdfGenerator';
-import { Download, Printer, ChevronDown, ChevronUp, Mail, Phone } from 'lucide-react';
+import { Download, Printer, ChevronDown, ChevronUp, Mail, Phone, Loader2 } from 'lucide-react';
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -12,22 +13,44 @@ interface AdminDashboardProps {
 export function AdminDashboard({ onLogout, onToggleView }: AdminDashboardProps) {
   const [submissions, setSubmissions] = useState<FormValues[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('narnia-submissions');
-      if (saved) {
-        setSubmissions(JSON.parse(saved));
-      }
-    } catch (e) {
-      console.error('Błąd wczytywania bazy zgłoszeń', e);
-    }
+    fetchSubmissions();
   }, []);
 
-  const handleClearDatabase = () => {
+  const fetchSubmissions = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('submissions')
+        .select('*')
+        .order('createdAt', { ascending: false });
+
+      if (error) throw error;
+      setSubmissions(data || []);
+    } catch (e) {
+      console.error('Błąd wczytywania bazy zgłoszeń', e);
+      alert('Błąd podczas pobierania danych z bazy Supabase.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClearDatabase = async () => {
     if (window.confirm('Czy na pewno chcesz usunąć WSZYSTKIE zgłoszenia z systemu? Tej operacji nie można cofnąć.')) {
-      localStorage.removeItem('narnia-submissions');
-      setSubmissions([]);
+      try {
+        const { error } = await supabase
+          .from('submissions')
+          .delete()
+          .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all works with a filter that matches everything
+
+        if (error) throw error;
+        setSubmissions([]);
+      } catch (e) {
+        console.error('Błąd podczas czyszczenia bazy', e);
+        alert('Wystąpił błąd podczas usuwania danych.');
+      }
     }
   };
 
@@ -86,7 +109,12 @@ export function AdminDashboard({ onLogout, onToggleView }: AdminDashboardProps) 
         <p className="text-sm font-bold mt-2">Łączna liczba osób: {submissions.length}</p>
       </div>
 
-      {submissions.length === 0 ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-24 text-gold space-y-4">
+          <Loader2 className="animate-spin" size={48} />
+          <p className="text-sm uppercase tracking-widest font-medium animate-pulse">Pobieranie danych...</p>
+        </div>
+      ) : submissions.length === 0 ? (
         <div className="text-center py-20 text-[var(--color-text-muted)] border border-dashed border-gold/10">
           <p className="text-lg">Brak zgłoszeń w bazie.</p>
         </div>

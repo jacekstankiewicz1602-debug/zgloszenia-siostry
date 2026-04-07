@@ -7,12 +7,14 @@ import { HealthSection } from './sections/HealthSection';
 import { ConsentsSection } from './sections/ConsentsSection';
 import { AdditionalSection } from './sections/AdditionalSection';
 import { FooterSection } from './sections/FooterSection';
+import { supabase } from '../lib/supabase';
 import { generateRegistrationPDF } from '../utils/pdfGenerator';
 import { Download } from 'lucide-react';
 
 export function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<FormValues | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { 
     register, 
@@ -33,7 +35,8 @@ export function RegistrationForm() {
     }
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
+    setIsSubmitting(true);
     // Generate unique ID and timestamp
     const fullData = {
       ...data,
@@ -41,18 +44,22 @@ export function RegistrationForm() {
       createdAt: new Date().toISOString()
     };
 
-    // Save to localStorage
+    // Save to Supabase
     try {
-      const existing = localStorage.getItem('narnia-submissions');
-      const submissions = existing ? JSON.parse(existing) : [];
-      submissions.push(fullData);
-      localStorage.setItem('narnia-submissions', JSON.stringify(submissions));
+      const { error } = await supabase
+        .from('submissions')
+        .insert([fullData]);
+
+      if (error) throw error;
+      
       setSubmittedData(fullData);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {
       console.error('Error saving submission:', e);
-      alert('Wystąpił błąd podczas zapisywania formularza.');
+      alert('Wystąpił błąd podczas zapisywania formularza w chmurze.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -129,9 +136,10 @@ export function RegistrationForm() {
         
         <button 
           type="submit"
-          className="w-full md:w-auto px-10 py-5 bg-gradient-to-r from-[#c5a059] to-[#a38040] text-[var(--color-bg-dark)] hover:brightness-110 transition-all duration-300 font-semibold uppercase tracking-[0.2em] text-sm shadow-luxury"
+          disabled={isSubmitting}
+          className={`w-full md:w-auto px-10 py-5 bg-gradient-to-r from-[#c5a059] to-[#a38040] text-[var(--color-bg-dark)] hover:brightness-110 transition-all duration-300 font-semibold uppercase tracking-[0.2em] text-sm shadow-luxury ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          Prześlij Zgłoszenie
+          {isSubmitting ? 'Wysyłanie...' : 'Prześlij Zgłoszenie'}
         </button>
       </div>
     </form>
